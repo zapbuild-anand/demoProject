@@ -49,7 +49,7 @@ class UsersTable extends Table
 
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->isUnique(['email']));
+        $rules->add($rules->isUnique(['email'],'Email is already in use!'));
 
         return $rules;
     }

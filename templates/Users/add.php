@@ -37,6 +37,7 @@ function myFunction() {
 
 <script type="text/javascript">
   $(document).ready(function(){
+    $('.error-message').addClass('text-danger');
     allowsubmit=0;
 
     $('#password').keyup(function(e){

@@ -40,6 +40,7 @@
             ?>
             <?php if(isset($user_id)): ?>
                 <li class="nav-item">
+                    <?= $this->Html->link(__('Change Password'), ['controller'=>'users','action' => 'change-password',$user_id], ['class' => 'btn btn-outline-secondary']) ?>
                     <?= $this->Html->link(__('Logout'), ['controller'=>'users','action' => 'logout'], ['class' => 'btn btn-outline-danger']) ?>
                 </li>
             <?php else: ?>
@@ -47,7 +48,7 @@
                     <?= $this->Html->link(__('Login'), ['controller'=>'users','action' => 'login'], ['class' => 'btn btn-outline-success mr-2']) ?>
                 </li>
                 <li class="nav-item">
-                    <?= $this->Html->link(__('Register'), ['controller'=>'users','action' => 'add'], ['class' => 'btn btn-outline-primary']) ?>
+                    <?= $this->Html->link(__('Register'), ['controller'=>'users','action' => 'register'], ['class' => 'btn btn-outline-primary']) ?>
                 </li>
             <?php endif; ?>
         </ul>

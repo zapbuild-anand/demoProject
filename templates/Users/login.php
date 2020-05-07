@@ -1,6 +1,6 @@
 <div class="container-fluid">
-    <div class="row justify-content-center p-2 mt-5">
-        <div class="col-5">
+    <div class="row justify-content-center mt-5">
+        <div class="col-5 p-4">
             <?= $this->Form->create() ?>
             <div class="form-group border rounded p-3">
                 <fieldset>
@@ -10,6 +10,9 @@
                     <?= $this->Form->control('password',['class'=>'form-control mb-2','placeholder'=>'E-mail']) ?>
                     <span id="error_password" class="text-danger"></span>
                 </fieldset>
+                <div class="float-right">
+                    <?= $this->Html->link(__('Forgot Password?'), ['controller'=>'users','action' => 'forgot-password']) ?>
+                </div>
                 <?= $this->Form->button('Login',['class'=>'btn btn-outline-success btn-rounded btn-block my-4 waves-effect z-depth-0','id'=>'btn_login']) ?>
             </div>
             <?= $this->Form->end() ?>

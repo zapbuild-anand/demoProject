@@ -13,6 +13,7 @@ class User extends Entity
         'name' => true,
         'email' => true,
         'password' => true,
+        'token' => true,
         'created' => true,
     ];
 

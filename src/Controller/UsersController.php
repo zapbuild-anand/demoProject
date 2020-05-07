@@ -2,6 +2,9 @@
 declare(strict_types=1);
 
 namespace App\Controller;
+use Cake\Mailer\Mailer;
+use Cake\Mailer\TransportFactory;
+use Cake\Utility\Security;
 
 class UsersController extends AppController
 {
@@ -68,6 +71,95 @@ class UsersController extends AppController
         $this->set(compact('user'));
     }
 
+    public function changePassword($id = null)
+    {
+        $user = $this->Users->get($id, [
+            'contain' => [],
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $user = $this->Users->patchEntity($user, $this->request->getData());
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('Password Changed.'));
+
+                return $this->redirect(['action' => 'home']);
+            }
+            $this->Flash->error(__('Please, try again.'));
+        }
+        $this->set(compact('user'));
+    }  
+
+    public function forgotPassword()
+    {
+        if ($this->request->is('post')) {
+            $myemail = $this->request->getData('email');
+            $mytoken=Security::hash(Security::randomBytes(25));
+
+            $user=$this->Users->findByEmail($myemail)->first();
+            if(isset($user))
+            {
+                $user->token=$mytoken;
+                if ($this->Users->save($user)) {
+                    $this->set(compact('myemail'));
+
+                TransportFactory::setConfig('mailtrap', [
+                    'host' => 'smtp.mailtrap.io',
+                    'port' => 2525,
+                    'username' => '49471287cb0491',
+                    'password' => '5b42fc8d761261',
+                    'className' => 'Smtp'
+                ]);
+
+                TransportFactory::setConfig('gmail', [
+                    'host' => 'smtp.gmail.com',
+                    'port' => 587,
+                    'username' => 'ankrsi008@gmail.com',
+                    'password' => '@2662663',
+                    'className' => 'Smtp',
+                    'tls' => true
+                ]);
+                    $mailer=new Mailer('default');
+                    $mailer=$mailer->setTransport('mailtrap')
+                            ->setEmailFormat('both')
+                            ->setFrom(['ak7870854714@gmail.com'=>'Anand Kumar'])
+                            ->setSubject('Please confirm your reset password:')
+                            ->setTo($myemail);
+                    $mailer->deliver('Hello '.$myemail.'<br>Please click link below to reset your password<br><br><br><a href="http://localhost:8765/users/reset-password/'.$mytoken.'">Reset Password</a>');
+                }
+
+                
+            }
+            else
+            {
+                $this->set('error','The email id is not registered with us. Please check them again.');
+            }
+              
+        }
+    }
+
+    public function resetPassword($token)
+    {
+        if ($this->request->is('post')) {
+            $mypass=$this->request->getData('password');
+
+            $user=$this->Users->find('all')->where(['token'=>$token])->first();
+            if(isset($user))
+            {
+                $user->password=$mypass;
+                $user->token='';
+                if ($this->Users->save($user)) {
+                    $this->Flash->success(__('Password recovered.'));
+
+                    return $this->redirect(['action' => 'login']);
+                }
+                $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            }
+            else
+            {
+                echo 'Link expired.';die;
+            }
+        }
+    }
+
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
@@ -116,6 +208,6 @@ class UsersController extends AppController
         parent::beforeFilter($event);
         // Configure the login action to not require authentication, preventing
         // the infinite redirect loop issue
-        $this->Authentication->addUnauthenticatedActions(['login','add']);
+        $this->Authentication->addUnauthenticatedActions(['login','add','forgotPassword','resetPassword']);
     }
 }

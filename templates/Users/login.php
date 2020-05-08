@@ -1,22 +1,28 @@
 <div class="container-fluid">
-    <div class="row justify-content-center mt-5">
-        <div class="col-5 p-4">
-            <?= $this->Form->create() ?>
+    <div class="row justify-content-center">
+        <div class="col-5 p-3 mt-5">
+        <?= $this->Form->create() ?>
             <div class="form-group border rounded p-3">
                 <fieldset>
                     <legend class="text-center"><?= __('Login') ?></legend>
                     <?= $this->Form->control('email', ['class'=>'form-control mb-2','placeholder'=>'E-mail']) ?>
                     <span id="error_email" class="text-danger"></span>
-                    <?= $this->Form->control('password',['class'=>'form-control mb-2','placeholder'=>'E-mail']) ?>
+                    <?= $this->Form->control('password',['class'=>'form-control mb-2','placeholder'=>'Password']) ?>
                     <span id="error_password" class="text-danger"></span>
+                    <input type="checkbox" onclick="myFunction()" class="mb-4">Show Password
                 </fieldset>
-                <div class="float-right">
-                    <?= $this->Html->link(__('Forgot Password?'), ['controller'=>'users','action' => 'forgot-password']) ?>
+                <div class="mb-4">
+                    <div class="float-right">
+                        <?= $this->Html->link(__('Forgot Password?'), ['controller'=>'users','action' => 'forgot-password']) ?>
+                    </div>
                 </div>
                 <?= $this->Form->button('Login',['class'=>'btn btn-outline-success btn-rounded btn-block my-4 waves-effect z-depth-0','id'=>'btn_login']) ?>
+                <div class="text-md-center">
+                  Don't have an account! <?= $this->Html->link(__('Register now'), ['action' => 'add']) ?>
+                </div>
             </div>
-            <?= $this->Form->end() ?>
-        </div>
+        <?= $this->Form->end() ?>
+    </div>
     </div>
 </div>
 

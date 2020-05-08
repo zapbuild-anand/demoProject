@@ -1,9 +1,9 @@
 <div class="row justify-content-md-center">
     <div class="col-6 p-3">
             <?= $this->Form->create(null,['enctype'=>'multipart/form-data','class'=>'form-disable','id'=>'form']) ?>
-            <div class="form-group p-3">
+            <div class="form-group border rounded p-3">
                 <fieldset>
-                    <legend><?= __('Reset Password') ?></legend>
+                    <legend class="text-center"><?= __('Reset Password') ?></legend>
                     <?php
                         echo $this->Form->control('password',['label'=>'New Password','class'=>'form-control mb-2']);
                         echo '<span id="error_password" class="text-danger"></span>';

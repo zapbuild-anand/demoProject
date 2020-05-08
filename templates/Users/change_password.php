@@ -1,11 +1,13 @@
 <div class="container-fluid">
     <div class="row justify-content-md-center">
-        <div class="col-5 p-3">
+        <div class="col-5 p-3 mt-5">
                 <?= $this->Form->create(null,['id'=>'form','enctype'=>'multipart/form-data','class'=>'form-disable','autocomplete'=>'off']) ?>
-                <div class="form-group p-3">
+                <div class="form-group border rounded p-3">
                     <fieldset>
-                        <legend><?= __('Change Password') ?></legend>
+                        <legend class="text-center"><?= __('Change Password') ?></legend>
                         <?php
+                            echo $this->Form->control('currentpassword',['label'=>'Current Password','class'=>'form-control mb-2','type'=>'password']);
+                            echo '<span id="error_currentpassword" class="text-danger"></span>';
                             echo $this->Form->control('password',['label'=>'New Password','class'=>'form-control mb-2']);
                             echo '<span id="error_password" class="text-danger"></span>';
                             echo '<input type="checkbox" onclick="myFunction()" class="mb-4">Show Password';
@@ -13,7 +15,7 @@
                             echo '<span id="error_confirmpassword" class="text-danger"></span>';
                         ?>
                     </fieldset>
-                    <?= $this->Form->button('Submit',['id'=>'submit','class'=>'btn btn-outline-info btn-rounded btn-block my-4 waves-effect z-depth-0']) ?>
+                    <?= $this->Form->button('Submit',['id'=>'submit','class'=>'btn btn-outline-info btn-rounded btn-block my-4']) ?>
                     <?= $this->Form->end() ?>
                 </div>
         </div>
@@ -35,11 +37,6 @@ function myFunction() {
 <script type="text/javascript">
         var allowsubmit = false;
         $(function(){
-            $('#oldpassword').keyup(function(e){
-                var oldpassword=$(this).val();
-            });
-
-
             //on keypress 
             $('#confirmpassword').keyup(function(e){
                 //get values 
@@ -80,6 +77,25 @@ function myFunction() {
 
             $('#form').submit(function(){
                 var error_password='';
+                var error_currentpassword='';
+                if($.trim($('#currentpassword').val()).length == 0){
+                    error_currentpassword="*Current Password is required<br>";
+                    $('#error_currentpassword').html(error_currentpassword);
+                }
+                else{
+                    error_currentpassword = '';
+                    $('#error_currentpassword').html(error_currentpassword);
+                    $('#currentpassword').removeClass('has-error');
+                }
+
+                if($.trim($('#password').val()).length == 0){
+                    error_password="*Password is required<br>";
+                    $('#error_password').html(error_password);
+                }
+                else{
+                    
+                }
+
                 if($.trim($('#password').val()).length == 0){
                     error_password="*Password is required<br>";
                     $('#error_password').html(error_password);
@@ -114,7 +130,7 @@ function myFunction() {
                     $('#error_confirmpassword').html(error_confirmpassword);
                     $('#confirmpassword').addClass('has-error');
                 }
-                if(allowsubmit && error_password==''){
+                if(allowsubmit && error_password=='' && error_currentpassword==''){
                     $('#submit').attr("disabled","disabled");
                     $(document).css('cursor','progress');
                     return true;

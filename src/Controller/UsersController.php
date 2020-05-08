@@ -5,17 +5,19 @@ namespace App\Controller;
 use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
 use Cake\Utility\Security;
+use Authentication\PasswordHasher\DefaultPasswordHasher;
 
 class UsersController extends AppController
 {
      public function initialize(): void
     {
         parent::initialize();
-        $this->viewBuilder()->setLayout('customLayout');
+        //$this->viewBuilder()->setLayout('beforeLogin');
         $this->set('title','DemoProject');
     }
     public function home()
     {
+        $this->viewBuilder()->setLayout('afterLogin');
         if($this->request->is('post'))
         {
             $keyword=$this->request->getData('search');
@@ -25,6 +27,7 @@ class UsersController extends AppController
 
     public function index()
     {
+        $this->viewBuilder()->setLayout('afterLogin');
         $users = $this->paginate($this->Users);
 
         $this->set(compact('users'));
@@ -32,6 +35,9 @@ class UsersController extends AppController
 
     public function view($id = null)
     {
+        $session = $this->getRequest()->getSession();
+        $id= $session->read('Auth.id');
+        $this->viewBuilder()->setLayout('afterLogin');
         $user = $this->Users->get($id, [
             'contain' => [],
         ]);
@@ -41,47 +47,63 @@ class UsersController extends AppController
 
     public function add()
     {
+        $this->viewBuilder()->setLayout('beforeLogin');
         $user = $this->Users->newEmptyEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
+                $this->Flash->success(__('You are registered continue with login.'));
 
                 return $this->redirect(['action' => 'home']);
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $this->Flash->error(__('Please, try again.'));
         }
         $this->set(compact('user'));
     }
 
-    public function edit($id = null)
+    public function edit()
     {
+        $session = $this->getRequest()->getSession();
+        $id= $session->read('Auth.id');
+        $this->viewBuilder()->setLayout('afterLogin');
         $user = $this->Users->get($id, [
             'contain' => [],
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
+                $this->Flash->success(__('Profile updated.'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'profile']);
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $this->Flash->error(__('Please, try again.'));
         }
         $this->set(compact('user'));
     }
 
-    public function changePassword($id = null)
+    public function changePassword()
     {
+        $this->viewBuilder()->setLayout('afterLogin');
+        $session = $this->getRequest()->getSession();
+        $id= $session->read('Auth.id');
         $user = $this->Users->get($id, [
             'contain' => [],
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $user = $this->Users->patchEntity($user, $this->request->getData());
-            if ($this->Users->save($user)) {
-                $this->Flash->success(__('Password Changed.'));
+            $currentpassword=$this->request->getData('currentpassword');
 
-                return $this->redirect(['action' => 'home']);
+            if((new DefaultPasswordHasher())->check($currentpassword, $user->password))
+            {
+                $user = $this->Users->patchEntity($user, $this->request->getData());
+                if ($this->Users->save($user)) {
+                    $this->Flash->success(__('Password Changed.'));
+
+                    return $this->redirect(['action' => 'home']);
+                }
+            }
+            else{
+                $this->Flash->error(__('Old Password is incorrect.'));
+                return $this->redirect(['action' => 'change-password']);
             }
             $this->Flash->error(__('Please, try again.'));
         }
@@ -90,6 +112,7 @@ class UsersController extends AppController
 
     public function forgotPassword()
     {
+        $this->viewBuilder()->setLayout('beforeLogin');
         if ($this->request->is('post')) {
             $myemail = $this->request->getData('email');
             $mytoken=Security::hash(Security::randomBytes(25));
@@ -138,6 +161,7 @@ class UsersController extends AppController
 
     public function resetPassword($token)
     {
+        $this->viewBuilder()->setLayout('beforeLogin');
         if ($this->request->is('post')) {
             $mypass=$this->request->getData('password');
 
@@ -175,11 +199,12 @@ class UsersController extends AppController
 
     public function login()
     {
+        $this->viewBuilder()->setLayout('beforeLogin');
         $this->request->allowMethod(['get', 'post']);
         $result = $this->Authentication->getResult();
         // regardless of POST or GET, redirect if user is logged in
         if ($result->isValid()) {
-            // redirect to /articles after login success
+            // redirect to /users/home after login success
             $redirect = $this->request->getQuery('redirect', [
                 'controller' => 'Users',
                 'action' => 'home',

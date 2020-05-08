@@ -1,10 +1,10 @@
-<div class="row justify-content-md-center mt-4">
-    <div class="col-5 p-3 border rounded">
+<div class="row justify-content-md-center mt-5">
+    <div class="col-5 p-4">
         <?php if(!isset($myemail)) : ?>
             <?= $this->Form->create(null,['enctype'=>'multipart/form-data','class'=>'form-disable','id'=>'form']) ?>
-            <div class="form-group">
+            <div class="form-group border rounded p-3">
                 <fieldset>
-                    <legend><?= __('Forgot Password') ?></legend>
+                    <legend class="text-center"><?= __('Forgot Password') ?></legend>
                     <?php if(!isset($error)) : ?>
                     	<p>Enter your Email ID to create a new password</p>
                     <?php else: ?>
